@@ -30,7 +30,7 @@ variable "server_name" {
 }
 
 variable "security_group_name" {
-  type        = string 
+  type        = string
   description = "The name of the security group"
   default     = "nginx-security-group"
 }
