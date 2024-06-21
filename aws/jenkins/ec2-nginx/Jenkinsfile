@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+    }
+
+    stages {
+        /*stage('Clonar Repositorio') {
+            steps {
+                git 'https://github.com/tu-usuario/tu-repo-terraform-nginx.git'
+            }
+        }*/
+        stage('Configurar Terraform') {
+            steps {
+                script {
+                    sh 'ls -lt'
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan'
+                }
+            }
+        }
+        stage('Aplicar Terraform') {
+            steps {
+                script {
+                    //sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+    }
+}
