@@ -6,13 +6,12 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
     }
 
+    parameters {
+        string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del modulo de terraform')
+    }
+
     stages {
-        /*stage('Clonar Repositorio') {
-            steps {
-                git 'https://github.com/tu-usuario/tu-repo-terraform-nginx.git'
-            }
-        }*/
-        stage('Configurar Terraform') {
+        stage('Configurando Terraform') {
             steps {
                 script {
                     sh 'ls -lt'
@@ -21,7 +20,7 @@ pipeline {
                 }
             }
         }
-        stage('Aplicar Terraform') {
+        stage('Deplegando Modulo de Terraform') {
             steps {
                 script {
                     sh 'echo Hello Step 2'
