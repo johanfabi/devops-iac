@@ -1,13 +1,17 @@
 pipeline {
+
     agent any
+
+    parameters {
+        string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del modulo de terraform.')
+        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Aprobar automaticamente.')
+        choice(name: 'action', choices: ['plan', 'apply', 'destroy'], description: 'Seleccione la accion a realizar.')
+    }
 
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
-    }
-
-    parameters {
-        string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del modulo de terraform')
+        AWS_DEFAULT_REGION    = 'us-east-1'
     }
 
     stages {
@@ -15,19 +19,39 @@ pipeline {
             steps {
                 script {
                     sh 'terraform --version'
-                    sh 'pwd'
                     sh 'ls -lt $WORKSPACE/$TERRAFORM_MODULE'
-                    sh 'cd $WORKSPACE/$TERRAFORM_MODULE'
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
                 }
             }
         }
-        stage('Deplegando Modulo de Terraform') {
+        stage('Iniciando Módulo de Terraform') {
             steps {
                 script {
-                    sh 'echo Hello Step 2'
-                    // sh 'terraform apply -auto-approve tfplan'
+                    sh 'terraform init'
+                }
+            }
+        }
+        stage('Imprimiendo Plan') {
+            steps {
+                sh 'terraform plan -out tfplan'
+                sh 'terraform show -no-color tfplan > tfplan.txt'
+            }
+        }
+        stage('Aplicando Terraform Apply / Destroy') {
+            steps {
+                script {
+                    if (params.action == 'apply') {
+                        if (!params.autoApprove) {
+                            def plan = readFile 'tfplan.txt'
+                            input message: "¿Desea aplicar los cambios?",
+                            parameters: [text(name: 'Plan', description: 'Por favor verifica el plan.', defaultValue: plan)]
+                        }
+
+                        sh 'terraform ${action} -input=false tfplan'
+                    } else if (params.action == 'destroy') {
+                        sh 'terraform ${action} --auto-approve'
+                    } else {
+                        error "Acción invalida, por favor seleccione apply o destroy."
+                    }
                 }
             }
         }
