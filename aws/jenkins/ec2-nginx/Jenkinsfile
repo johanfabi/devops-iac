@@ -27,7 +27,7 @@ pipeline {
         stage('Iniciando Módulo de Terraform') {
             steps {
                 script {
-                    sh 'terraform init $WORKSPACE/$TERRAFORM_MODULE'
+                    sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE init'
                 }
             }
         }
@@ -48,7 +48,7 @@ pipeline {
                         }
 
                         sh 'terraform ${action} $WORKSPACE/$TERRAFORM_MODULE -input=false tfplan'
-                        
+
                     } else if (params.action == 'destroy') {
                         sh 'terraform ${action} $WORKSPACE/$TERRAFORM_MODULE --auto-approve'
                     } else {
