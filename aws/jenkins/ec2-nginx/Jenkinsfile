@@ -5,7 +5,7 @@ pipeline {
     parameters {
         string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del modulo de terraform.')
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Aprobar automaticamente.')
-        choice(name: 'action', choices: ['plan', 'apply', 'destroy'], description: 'Seleccione la accion a realizar.')
+        choice(name: 'action', choices: ['apply', 'destroy'], description: 'Seleccione la accion a realizar.')
     }
 
     environment {
@@ -20,7 +20,6 @@ pipeline {
                 script {
                     sh 'terraform --version'
                     sh 'ls -lt $WORKSPACE/$TERRAFORM_MODULE'
-                    sh 'cd $WORKSPACE/$TERRAFORM_MODULE'
                     sh 'ls -lt'
                 }
             }
@@ -28,14 +27,14 @@ pipeline {
         stage('Iniciando Módulo de Terraform') {
             steps {
                 script {
-                    sh 'terraform init'
+                    sh 'terraform init $WORKSPACE/$TERRAFORM_MODULE'
                 }
             }
         }
         stage('Imprimiendo Plan') {
             steps {
-                sh 'terraform plan -out tfplan'
-                sh 'terraform show -no-color tfplan > tfplan.txt'
+                sh 'terraform plan $WORKSPACE/$TERRAFORM_MODULE -out tfplan'
+                sh 'terraform show $WORKSPACE/$TERRAFORM_MODULE -no-color tfplan > tfplan.txt'
             }
         }
         stage('Aplicando Terraform Apply / Destroy') {
@@ -48,9 +47,10 @@ pipeline {
                             parameters: [text(name: 'Plan', description: 'Por favor verifica el plan.', defaultValue: plan)]
                         }
 
-                        sh 'terraform ${action} -input=false tfplan'
+                        sh 'terraform ${action} $WORKSPACE/$TERRAFORM_MODULE -input=false tfplan'
+                        
                     } else if (params.action == 'destroy') {
-                        sh 'terraform ${action} --auto-approve'
+                        sh 'terraform ${action} $WORKSPACE/$TERRAFORM_MODULE --auto-approve'
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
                     }
