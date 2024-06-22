@@ -20,6 +20,7 @@ pipeline {
                 script {
                     sh 'terraform --version'
                     sh 'ls -lt $WORKSPACE/$TERRAFORM_MODULE'
+                    sh 'cd $WORKSPACE/$TERRAFORM_MODULE'
                 }
             }
         }
