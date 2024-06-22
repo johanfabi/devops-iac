@@ -14,8 +14,9 @@ pipeline {
         stage('Configurando Terraform') {
             steps {
                 script {
-                    sh 'ls -lt'
+                    sh 'terraform --version'
                     sh 'cd $TERRAFORM_MODULE'
+                    sh 'ls -lt'
                     sh 'terraform init'
                     sh 'terraform plan -out=tfplan'
                 }
