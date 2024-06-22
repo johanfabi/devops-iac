@@ -17,7 +17,7 @@ pipeline {
                     sh 'terraform --version'
                     sh 'pwd'
                     sh 'ls -lt'
-                    sh 'cd $TERRAFORM_MODULE'
+                    sh 'cd $WORKSPACE/$TERRAFORM_MODULE'
                     sh 'terraform init'
                     sh 'terraform plan -out=tfplan'
                 }
