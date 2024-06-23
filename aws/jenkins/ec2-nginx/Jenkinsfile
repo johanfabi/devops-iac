@@ -44,14 +44,14 @@ pipeline {
                             input message: "¿Desea aplicar los cambios?"
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action}'
 
                     } else if (params.action == 'destroy') {
                         if (!params.autoApprove) {
                             input message: "¿Desea eliminar los recursos?"
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} --auto-approve'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action}'
 
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
