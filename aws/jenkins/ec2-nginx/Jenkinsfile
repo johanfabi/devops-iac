@@ -56,7 +56,7 @@ pipeline {
                             parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a eliminar.', defaultValue: plan)]
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false'
 
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
