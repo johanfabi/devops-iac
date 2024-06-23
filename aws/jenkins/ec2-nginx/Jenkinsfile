@@ -34,7 +34,7 @@ pipeline {
         stage('Imprimiendo Plan') {
             steps {
                 sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan -out tfplan'
-                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE show -no-color tfplan > tfplan.txt'
+                //sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE show -no-color tfplan > tfplan.txt'
             }
         }
         stage('Aplicando Terraform Apply / Destroy') {
@@ -56,7 +56,7 @@ pipeline {
                             parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a eliminar.', defaultValue: plan)]
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} --auto-approve'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
 
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
