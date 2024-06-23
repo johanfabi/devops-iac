@@ -33,8 +33,7 @@ pipeline {
         }
         stage('Imprimiendo Plan') {
             steps {
-                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan -out tfplan'
-                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE show -no-color tfplan > tfplan.txt'
+                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan'
             }
         }
         stage('Aplicando Terraform Apply / Destroy') {
@@ -42,18 +41,14 @@ pipeline {
                 script {
                     if (params.action == 'apply') {
                         if (!params.autoApprove) {
-                            def plan = readFile 'tfplan.txt'
                             input message: "¿Desea aplicar los cambios?",
-                            parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a crear.', defaultValue: plan)]
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
 
                     } else if (params.action == 'destroy') {
                         if (!params.autoApprove) {
-                            def plan = readFile 'tfplan.txt'
                             input message: "¿Desea eliminar los recursos?",
-                            parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a eliminar.', defaultValue: plan)]
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} --auto-approve'
