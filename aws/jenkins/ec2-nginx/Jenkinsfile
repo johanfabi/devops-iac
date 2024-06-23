@@ -34,7 +34,7 @@ pipeline {
         stage('Imprimiendo Plan') {
             steps {
                 sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan -out tfplan'
-                //sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE show -no-color tfplan > tfplan.txt'
+                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE show -no-color tfplan > tfplan.txt'
             }
         }
         stage('Aplicando Terraform Apply / Destroy') {
