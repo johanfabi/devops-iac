@@ -41,14 +41,14 @@ pipeline {
                 script {
                     if (params.action == 'apply') {
                         if (!params.autoApprove) {
-                            input message: "¿Desea aplicar los cambios?",
+                            input message: "¿Desea aplicar los cambios?"
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
 
                     } else if (params.action == 'destroy') {
                         if (!params.autoApprove) {
-                            input message: "¿Desea eliminar los recursos?",
+                            input message: "¿Desea eliminar los recursos?"
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} --auto-approve'
