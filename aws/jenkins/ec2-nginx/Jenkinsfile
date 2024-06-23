@@ -44,13 +44,20 @@ pipeline {
                         if (!params.autoApprove) {
                             def plan = readFile 'tfplan.txt'
                             input message: "¿Desea aplicar los cambios?",
-                            parameters: [text(name: 'Plan', description: 'Por favor verifica el plan.', defaultValue: plan)]
+                            parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a crear.', defaultValue: plan)]
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false tfplan'
 
                     } else if (params.action == 'destroy') {
+                        if (!params.autoApprove) {
+                            def plan = readFile 'tfplan.txt'
+                            input message: "¿Desea eliminar los recursos?",
+                            parameters: [text(name: 'Plan', description: 'Por favor verifica los recursos a eliminar.', defaultValue: plan)]
+                        }
+
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} --auto-approve'
+
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
                     }
