@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Imprimiendo Plan') {
             steps {
-                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan'
+                sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE plan -out=tfplan'
             }
         }
         stage('Aplicando Terraform Apply / Destroy') {
@@ -41,17 +41,17 @@ pipeline {
                 script {
                     if (params.action == 'apply') {
                         if (!params.autoApprove) {
-                            input message: "¿Desea aplicar los cambios?"
+                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Desplegar')
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve tfplan'
 
                     } else if (params.action == 'destroy') {
                         if (!params.autoApprove) {
-                            input message: "¿Desea eliminar los recursos?"
+                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Desplegar')
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -input=false'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve tfplan'
 
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
