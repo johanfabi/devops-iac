@@ -3,8 +3,8 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del modulo de terraform.')
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Aprobar automaticamente.')
+        string(name: 'TERRAFORM_MODULE', description: 'Inserte la ruta del módulo de terraform.')
+        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Aprobar automáticamente.')
         choice(name: 'action', choices: ['apply', 'destroy'], description: 'Seleccione la acción a realizar.')
     }
 
@@ -58,7 +58,7 @@ pipeline {
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve'
 
                     } else {
-                        error "Acción invalida, por favor seleccione apply o destroy."
+                        error "Acción inválida, por favor seleccione apply o destroy."
                     }
                 }
             }
