@@ -41,17 +41,17 @@ pipeline {
                 script {
                     if (params.action == 'apply') {
                         if (!params.autoApprove) {
-                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Desplegar')
+                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Apply')
                         }
 
                         sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve tfplan'
 
                     } else if (params.action == 'destroy') {
                         if (!params.autoApprove) {
-                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Desplegar')
+                            input(message: '¿Deseas desplegar el módulo de Terraform?', ok: 'Destroy')
                         }
 
-                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve tfplan'
+                        sh 'terraform -chdir=$WORKSPACE/$TERRAFORM_MODULE ${action} -auto-approve'
 
                     } else {
                         error "Acción invalida, por favor seleccione apply o destroy."
